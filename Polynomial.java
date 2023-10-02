@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Math;
 
@@ -19,6 +20,7 @@ public class Polynomial{
         this.coefficients = new double[coefficients.length];
         for(int i=0 ; i<coefficients.length ; i++){
             this.coefficients[i] = coefficients[i];
+        }
         this.exponents = new int[exponents.length];
         for(int i=0 ; i<exponents.length ; i++){
             this.exponents[i] = exponents[i];
@@ -28,20 +30,29 @@ public class Polynomial{
         int len1 = p.exponents.length;
         int len2 = this.exponents.length;
         int flag = 0;
-        double[] result = new double[len];
+        double[] result = new double[len2];
+
+        double[] newCoefficients = Arrays.copyOf(this.coefficients, len2);
+        int[] newExponents = Arrays.copyOf(this.exponents, len2);
+
         for(int i=0 ; i<len1 ; i++){
             for(int j=0 ; j<len2 ; j++){
-                if (p.exponents[i] == this.exponents[j]){
-                    this.coefficients[j] += p.coefficients[i];
+                if (p.exponents[i] == newExponents[j]) {
+                    newCoefficients[j] += p.coefficients[i];
                     flag = 1;
                     }
             }
             if (flag == 0){
-                this.exponents.add(p.exponents[i]);
-                this.coefficients.add(p.coefficients[i]);
+                newCoefficients = Arrays.copyOf(newCoefficients, len2 + 1);
+                newExponents = Arrays.copyOf(newExponents, len2 + 1);
+                newExponents[len2] = p.exponents[i];
+                newCoefficients[len2] = p.coefficients[i];
+                len2++;
             }
             flag = 0;
         }
+        this.coefficients = newCoefficients;
+        this.exponents = newExponents;
         return this;
     }
     public double evaluate(double x){
@@ -124,22 +135,4 @@ public class Polynomial{
         writer.newLine();
         writer.close();
     }
-}
-public class Driver {
-public static void main(String [] args) {
-Polynomial p = new Polynomial();
-System.out.println(p.evaluate(3));
-double [] c1 = {6,0,1};
-double [] c2 = {2,1,3};
-Polynomial p1 = new Polynomial(c1, c2);
-double [] c3 = {1,-2,5};
-double [] c4 = {3,5,2};
-Polynomial p2 = new Polynomial(c3, c4);
-Polynomial s = p1.add(p2);
-System.out.println("s(0.1) = " + s.evaluate(0.1));
-if(s.hasRoot(1))
-System.out.println("1 is a root of s");
-else
-System.out.println("1 is not a root of s");
-}
 }
